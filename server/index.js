@@ -2,6 +2,7 @@
 const express = require('express');
 const cors = require('cors');
 const authRoutes = require('./routes/auth.routes'); // Import our auth routes
+const projectRoutes = require('./routes/projects.routes');
 const app = express();
 const PORT = 8000;
 
@@ -11,6 +12,7 @@ app.use(express.json());
 
 // API Routes
 app.use('/auth', authRoutes); // Use the auth routes for any path starting with /auth
+app.use('/api/projects', projectRoutes);
 
 // A simple test route to make sure the server is running
 app.get('/', (req, res) => {
