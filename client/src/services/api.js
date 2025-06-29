@@ -28,3 +28,7 @@ export const login = (email, password) => {
 export const getProjects = () => {
   return apiClient.get('/api/projects');
 };
+
+export const createProject = (name) => {
+  return apiClient.post('/api/projects', { name });
+};
