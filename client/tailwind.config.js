@@ -1,11 +1,10 @@
-/** @type {import('tailwindcss').Config} */
+import tailwindcss from 'tailwindcss';
+import autoprefixer from 'autoprefixer';
+
+/** @type {import('postcss-load-config').Config} */
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
+  plugins: [
+    tailwindcss,
+    autoprefixer,
   ],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
 }
