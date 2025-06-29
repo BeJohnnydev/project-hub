@@ -1,10 +1,11 @@
-import tailwindcss from 'tailwindcss';
-import autoprefixer from 'autoprefixer';
-
-/** @type {import('postcss-load-config').Config} */
+/** @type {import('tailwindcss').Config} */
 export default {
-  plugins: [
-    tailwindcss,
-    autoprefixer,
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}", // This line tells Tailwind to scan all .jsx files in your src folder
   ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
 }
