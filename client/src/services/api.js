@@ -1,17 +1,30 @@
 // src/services/api.js
 import axios from 'axios';
 
-// Create an axios instance with a base URL for our backend
 const apiClient = axios.create({
-  baseURL: 'http://localhost:8000', // The address of our Node.js server
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  baseURL: 'http://localhost:8000',
+  headers: { 'Content-Type': 'application/json' },
 });
 
-// We can define all our API calls as functions here
+// This is an "interceptor". It runs before every request.
+apiClient.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 export const login = (email, password) => {
   return apiClient.post('/auth/login', { email, password });
 };
 
-// We will add more functions here later (e.g., for projects)
+// New function to get projects
+export const getProjects = () => {
+  return apiClient.get('/api/projects');
+};

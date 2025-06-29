@@ -2,14 +2,20 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
+import DashboardPage from './pages/DashboardPage';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
-    <Routes>
-      {/* This route says: when the URL path is "/", render the LoginPage component */}
+   <Routes>
+      {/* Public Route */}
       <Route path="/" element={<LoginPage />} />
 
-      {/* We will add more routes here later (e.g., for the dashboard) */}
+      {/* Protected Routes */}
+      <Route element={<ProtectedRoute />}>
+        <Route path="/dashboard" element={<DashboardPage />} />
+        {/* We can add more protected routes here later */}
+      </Route>
     </Routes>
   );
 }

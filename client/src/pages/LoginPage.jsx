@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { login } from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 function LoginPage() {
   // Create state variables to hold the email and password
@@ -11,6 +12,7 @@ function LoginPage() {
 
   // Get the login function and loading state from our context
   const { login } = useAuth();
+  const navigate = useNavigate(); // For navigation after login
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (event) => {
@@ -21,7 +23,7 @@ function LoginPage() {
     try {
       // Call the login function from our api service
       const response = await login(email, password);
-      
+      navigate('/dashboard');
       // On success, the response object from axios is in response.data
       console.log('Login Successful!', response.data);
       // In a real app, we would save the token from response.data.session.access_token
