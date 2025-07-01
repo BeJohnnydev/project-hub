@@ -4,6 +4,8 @@ import { Routes, Route } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import ProtectedRoute from './components/ProtectedRoute';
+import ProjectDetailPage from './pages/ProjectDetailPage';
+
 
 function App() {
   return (
@@ -14,6 +16,7 @@ function App() {
       {/* Protected Routes */}
       <Route element={<ProtectedRoute />}>
         <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/project/:id" element={<ProjectDetailPage />} />
         {/* We can add more protected routes here later */}
       </Route>
     </Routes>

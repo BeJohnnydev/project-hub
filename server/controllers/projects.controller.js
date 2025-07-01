@@ -100,4 +100,30 @@ const deleteProject = async (req, res) => {
     }
 };
 
-module.exports = { createProject, getProjects, updateProject, deleteProject };
+const getProjectById = async (req, res) => {
+  const { id } = req.params; // Get project ID from URL
+  const { user } = req; // Get user from our auth middleware
+
+  try {
+    const { data, error } = await supabase
+          .from('projects')
+          .select(`
+            *,
+            lists (
+              *,
+              tasks ( * )
+            )
+          `) // This now fetches projects, their lists, and the tasks for each list
+          .match({ id: id, user_id: user.id })
+          .single();
+
+    if (error) throw error;
+    if (!data) return res.status(404).json({ error: 'Project not found or you do not have permission.' });
+
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json({ error: 'An unexpected error occurred.' });
+  }
+};
+
+module.exports = { createProject, getProjects, updateProject, deleteProject, getProjectById };

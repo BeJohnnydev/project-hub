@@ -1,7 +1,7 @@
 // src/pages/DashboardPage.jsx
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom'; // Import Link for navigation
 import { useAuth } from '../context/AuthContext';
-// Import both getProjects and the new createProject
 import { getProjects, createProject } from '../services/api';
 
 function DashboardPage() {
@@ -23,18 +23,19 @@ function DashboardPage() {
         setError('Failed to fetch projects.');
         console.error(err);
       });
-  }, []);
+  }, []); // The empty array [] means this effect runs only once
 
   // Handle the creation of a new project
   const handleCreateProject = async (e) => {
     e.preventDefault();
-    if (!newProjectName) return;
+    if (!newProjectName.trim()) return; // Don't create empty projects
 
     setIsCreating(true);
+    setError(null); // Clear previous errors
     try {
       const response = await createProject(newProjectName);
-      // Add the new project to our existing list in the UI
-      setProjects([...projects, response.data]);
+      // Add the new project to our existing list in the UI for an instant update
+      setProjects(prevProjects => [...prevProjects, response.data]);
       setNewProjectName(''); // Clear the input field
     } catch (err) {
       setError('Failed to create project.');
@@ -48,7 +49,7 @@ function DashboardPage() {
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
       <header className="bg-white shadow">
-        <div className="max-w-4xl mx-auto py-4 px-4 flex justify-between items-center">
+        <div className="max-w-4xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
           <h1 className="text-xl font-bold text-gray-800">Welcome, {user?.email}!</h1>
           <button
             onClick={logout}
@@ -65,7 +66,7 @@ function DashboardPage() {
           <h2 className="text-2xl font-bold mb-4 text-gray-800">My Projects</h2>
 
           {/* Create New Project Form */}
-          <form onSubmit={handleCreateProject} className="mb-6 flex gap-4">
+          <form onSubmit={handleCreateProject} className="mb-6 flex flex-col sm:flex-row gap-4">
             <input
               type="text"
               value={newProjectName}
@@ -76,7 +77,7 @@ function DashboardPage() {
             />
             <button
               type="submit"
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-blue-300"
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-blue-300 whitespace-nowrap"
               disabled={isCreating}
             >
               {isCreating ? 'Creating...' : '+ Add Project'}
@@ -90,10 +91,13 @@ function DashboardPage() {
           <div className="space-y-4">
             {projects.length > 0 ? (
               projects.map((project) => (
-                <div key={project.id} className="bg-gray-50 p-4 rounded-lg flex justify-between items-center">
-                  <p className="text-gray-900">{project.name}</p>
-                  <span className="text-sm text-gray-500">Created: {new Date(project.created_at).toLocaleDateString()}</span>
-                </div>
+                // Each project is now a clickable Link that navigates to its detail page
+                <Link to={`/project/${project.id}`} key={project.id}>
+                  <div className="bg-gray-50 p-4 rounded-lg flex justify-between items-center hover:bg-gray-200 transition-colors cursor-pointer">
+                    <p className="text-gray-900 font-semibold">{project.name}</p>
+                    <span className="text-sm text-gray-500">Created: {new Date(project.created_at).toLocaleDateString()}</span>
+                  </div>
+                </Link>
               ))
             ) : (
               <p className="text-gray-500">You don't have any projects yet. Add one above!</p>

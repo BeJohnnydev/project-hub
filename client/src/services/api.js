@@ -32,3 +32,15 @@ export const getProjects = () => {
 export const createProject = (name) => {
   return apiClient.post('/api/projects', { name });
 };
+
+export const getProjectById = (id) => {
+  return apiClient.get(`/api/projects/${id}`);
+};
+
+export const createList = (projectId, name) => {
+  return apiClient.post(`/api/projects/${projectId}/lists`, { name });
+};
+
+export const createTask = (projectId, listId, name) => {
+        return apiClient.post(`/api/projects/${projectId}/lists/${listId}/tasks`, { name });
+    };
