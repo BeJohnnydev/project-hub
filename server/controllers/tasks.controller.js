@@ -88,4 +88,36 @@
       }
     };
 
-    module.exports = { createTask, updateTaskPosition };
+     const deleteTask = async (req, res) => {
+      const { user } = req;
+      const { taskId } = req.params;
+
+      try {
+        // Security check: Verify the user owns the task they are trying to delete.
+        const { data: taskData, error: permError } = await supabase
+          .from('tasks')
+          .select('id, lists(projects(user_id))')
+          .eq('id', taskId)
+          .single();
+
+        if (permError || !taskData || taskData.lists.projects.user_id !== user.id) {
+          return res.status(404).json({ error: 'Task not found or permission denied.' });
+        }
+
+        // If the check passes, delete the task.
+        const { error } = await supabase
+          .from('tasks')
+          .delete()
+          .eq('id', taskId);
+
+        if (error) throw error;
+
+        res.status(204).send(); // 204 No Content on successful deletion
+
+      } catch (error) {
+        console.error("Error deleting task:", error);
+        res.status(500).json({ error: 'An unexpected error occurred.' });
+      }
+    };
+
+    module.exports = { createTask, updateTaskPosition, deleteTask };

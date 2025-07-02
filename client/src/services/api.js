@@ -48,3 +48,11 @@ export const createTask = (projectId, listId, name) => {
 export const updateTaskPosition = (taskId, listId, position) => {
   return apiClient.put(`/api/tasks/${taskId}`, { list_id: listId, position });
 }
+
+export const deleteProject = (id) => {
+  return apiClient.delete(`/api/projects/${id}`);
+};
+
+export const deleteTask = (taskId) => {
+      return apiClient.delete(`/api/tasks/${taskId}`);
+    };

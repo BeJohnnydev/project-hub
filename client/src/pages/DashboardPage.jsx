@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom'; // Import Link for navigation
 import { useAuth } from '../context/AuthContext';
-import { getProjects, createProject } from '../services/api';
+import { getProjects, createProject, deleteProject } from '../services/api';
 
 function DashboardPage() {
   const { user, logout } = useAuth();
@@ -42,6 +42,24 @@ function DashboardPage() {
       console.error(err);
     } finally {
       setIsCreating(false);
+    }
+  };
+
+   const handleDeleteProject = async (projectId, e) => {
+    // Prevent the Link navigation when clicking the button
+    e.preventDefault();
+    e.stopPropagation();
+
+    // Ask for confirmation before deleting
+    if (window.confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
+      try {
+        await deleteProject(projectId);
+        // Update the UI by filtering out the deleted project
+        setProjects(projects.filter(p => p.id !== projectId));
+      } catch (err) {
+        setError('Failed to delete project.');
+        console.error(err);
+      }
     }
   };
 
@@ -96,7 +114,15 @@ function DashboardPage() {
                   <div className="bg-gray-50 p-4 rounded-lg flex justify-between items-center hover:bg-gray-200 transition-colors cursor-pointer">
                     <p className="text-gray-900 font-semibold">{project.name}</p>
                     <span className="text-sm text-gray-500">Created: {new Date(project.created_at).toLocaleDateString()}</span>
+                  <button
+                      onClick={(e) => handleDeleteProject(project.id, e)}
+                      className="text-gray-400 hover:text-red-600 font-bold py-1 px-2 rounded focus:outline-none"
+                      title="Delete Project"
+                    >
+                      &#x2715; {/* This is a simple 'X' character */}
+                    </button>
                   </div>
+                   
                 </Link>
               ))
             ) : (
