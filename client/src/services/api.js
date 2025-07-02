@@ -44,3 +44,7 @@ export const createList = (projectId, name) => {
 export const createTask = (projectId, listId, name) => {
         return apiClient.post(`/api/projects/${projectId}/lists/${listId}/tasks`, { name });
     };
+
+export const updateTaskPosition = (taskId, listId, position) => {
+  return apiClient.put(`/api/tasks/${taskId}`, { list_id: listId, position });
+}

@@ -54,5 +54,38 @@
       }
     };
 
-    module.exports = { createTask };
-    
+    const updateTaskPosition = async (req, res) => {
+      const { user } = req;
+      const { taskId } = req.params;
+      const { list_id, position } = req.body;
+
+      try {
+        // First, verify the user owns the task they are trying to move
+        const { data: taskData, error: permError } = await supabase
+          .from('tasks')
+          .select('lists(projects(user_id))')
+          .eq('id', taskId)
+          .single();
+
+        if (permError || !taskData || taskData.lists.projects.user_id !== user.id) {
+          return res.status(404).json({ error: 'Task not found or permission denied.' });
+        }
+
+        // Update the task with the new list_id and position
+        const { data, error } = await supabase
+          .from('tasks')
+          .update({ list_id, position })
+          .eq('id', taskId)
+          .select()
+          .single();
+
+        if (error) throw error;
+
+        res.status(200).json(data);
+      } catch (error) {
+        console.error("Error updating task position:", error);
+        res.status(500).json({ error: 'An unexpected error occurred.' });
+      }
+    };
+
+    module.exports = { createTask, updateTaskPosition };
